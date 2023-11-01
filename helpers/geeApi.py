@@ -16,10 +16,35 @@ class PrecorsiaGee:
         ee.Authenticate()
         ee.Initialize()
 
-    def request(self, image, geolocation):
-        pass
+    def request(self, image, geolocation, band, band_range):
 
-    def image(self, geolocation, dateset):
+        _proj = ee.Projection('EPSG:4326').atScale(10).getInfo()
+        _scale_x = _proj['transform'][0]
+        _scale_y = _proj['transform'][4]
+
+        return {
+            'assetId': self.dataset + '/' + image,
+            'fileFormat': 'PNG',
+            'bandIds': [band],
+            'grid': {
+                'dimensions': {
+                    'width': 512,
+                    'height': 512
+                },
+                'affineTransform': {
+                    'scaleX': _scale_x,
+                    'shearX': 0,
+                    'translateX': geolocation[0],
+                    'scaleY': _scale_y,
+                    'shearY': 0,
+                    'translateY': geolocation[1]
+                },
+                'crsCode': _proj['crs']
+            },
+            'visualizationOptions':  {'ranges': [{'min': band_range[0], 'max': band_range[1]}]},
+        }
+
+    def image(self, geolocation, dateset, band, band_range):
 
         _filter = ee.Filter.And(
             ee.Filter.bounds(geolocation, self.margin),
@@ -33,7 +58,7 @@ class PrecorsiaGee:
             raise Exception('No images found')
 
         _image = ee.Image(_image_list[0])
-        _image_data = self.request(_image, geolocation)
+        _image_data = self.request(_image, geolocation, band, band_range)
 
         _image_pixels = Image.open(io.BytesIO(_image_data))
         _image_p_l = _image_pixels.convert('L')
