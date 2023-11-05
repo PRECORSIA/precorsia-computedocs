@@ -14,7 +14,7 @@ import ee
 # ALSO: MAKE AN API REQUEST COUNTER
 
 class PrecorsiaGee:
-    
+
     def __init__(self, dataset, band_range, margin=50):
         self.dataset = dataset
         self.band_range = band_range
@@ -85,3 +85,16 @@ class PrecorsiaGee:
         _image_array = np.array(_image_p_l)
 
         return _image_array
+
+    @staticmethod
+    def correlate_dates(list_one, list_two, round_factor):
+
+        _one_rounded = [_img['time_start'] // 10**round_factor * 10**round_factor for _img in list_one]
+        _two_rounded = [_img['time_start'] // 10**round_factor * 10**round_factor for _img in list_two]
+
+        _common_rounded = np.intersect1d(_one_rounded, _two_rounded)
+
+        _intersected_list_one = [img for img in list_one if img['time_start'] // 10**round_factor * 10**round_factor in _common_rounded]
+        _intersected_list_two = [img for img in list_two if img['time_start'] // 10**round_factor * 10**round_factor in _common_rounded]
+
+        return _intersected_list_one, _intersected_list_two
