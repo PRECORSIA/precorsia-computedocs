@@ -79,7 +79,7 @@ class ImageProcessor:
             _img_filtered = (best_image * _img_mask) + _img_arr
             plt.imsave(f'{self.buffer_dir}%s.png' % _image['id'], _img_filtered, cmap='gray')
 
-    def process_images(self):
+    def zero_counting_filter(self):
         """
         @brief Processes all the images in the image_lists attribute.
         """
