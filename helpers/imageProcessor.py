@@ -21,11 +21,13 @@ class ImageProcessor:
         @return Returns a list of dictionaries. Each dictionary represents an image and contains 'id' and 'zeros' keys. The 'zeros' key is the proportion of zero pixels in the image.
         """
         _zeros_class = []
-        for _id in [image['id'] for image in image_list]:
+        for _image in [image for image in image_list]:
+            _id = _image['id']
             _img = Image.open(f'{self.buffer_dir}%s.png' % _id).convert('L')
             _img_arr = np.array(_img)
             _zeros = np.count_nonzero(_img_arr == 0)
-            _zeros_class.append({'id': _id, 'zeros': (_zeros / np.prod(_img_arr.shape))})
+            _zeros_class.append({'id': _id, 'time_start': _image['time_start'], 'zeros': (_zeros / np.prod(_img_arr.shape))})
+        
         return _zeros_class
 
     def discard_images(self, zeros_class, clip_amount=0.33):
@@ -83,9 +85,13 @@ class ImageProcessor:
         """
         @brief Processes all the images in the image_lists attribute.
         """
+        after_delete = []
         for _image_list in self.image_lists:
             _zeros_class = self.calculate_zeros(_image_list)
-            _zeros_class = self.discard_images(_zeros_class)
-            _best_class = ImageProcessor.select_best_images(_zeros_class)
+            _zeros_discad = self.discard_images(_zeros_class)
+            _best_class = ImageProcessor.select_best_images(_zeros_discad)
             _best_image = self.calculate_best_image(_best_class)
             self.replace_and_save(_best_class, _best_image)
+            after_delete.append(_zeros_class)
+
+        return after_delete
