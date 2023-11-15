@@ -130,3 +130,24 @@ class PrecorsiaGee:
         _intersected_list_two = [img for img in list_two if img['time_start'] // 10**round_factor * 10**round_factor in _common_rounded]
 
         return _intersected_list_one, _intersected_list_two
+    
+    @staticmethod
+    def connected_correlation(list_one, list_two, round_factor):
+        """
+        @brief Finds common time intervals between two lists of images and returns pairs of image IDs from each list that fall within these intervals.
+        @param list_one A list of dictionaries representing images. Each dictionary should have 'id' and 'time_start' keys.
+        @param list_two A list of dictionaries representing images. Each dictionary should have 'id' and 'time_start' keys.
+        @param round_factor An integer representing the factor by which to round the 'time_start' values.
+        @return Returns a list of tuples. Each tuple contains two lists of image IDs from list_one and list_two that fall within the same time interval.
+        """
+
+        _one_rounded = [_img['time_start'] // 10**round_factor * 10**round_factor for _img in list_one]
+        _two_rounded = [_img['time_start'] // 10**round_factor * 10**round_factor for _img in list_two]
+
+        _common_rounded = []
+        for rounded_val in set(_one_rounded).intersection(set(_two_rounded)):
+            one_ids = [img['id'] for img in list_one if img['time_start'] // 10**round_factor * 10**round_factor == rounded_val]
+            two_ids = [img['id'] for img in list_two if img['time_start'] // 10**round_factor * 10**round_factor == rounded_val]
+            _common_rounded.append((one_ids, two_ids))
+
+        return _common_rounded
