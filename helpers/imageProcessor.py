@@ -30,7 +30,7 @@ class ImageProcessor:
         
         return _zeros_class
 
-    def discard_images(self, zeros_class, clip_amount=0.33):
+    def discard_images(self, zeros_class, clip_amount=0.33, hard_delete=False):
         """
         @brief Discards images with a proportion of zero pixels above a certain threshold.
         @param zeros_class A list of dictionaries representing images. Each dictionary should have 'id' and 'zeros' keys.
@@ -40,7 +40,8 @@ class ImageProcessor:
         _zeros_class = zeros_class
         for _image in _zeros_class:
             if _image['zeros'] > clip_amount:
-                os.remove(f'{self.buffer_dir}%s.png' % _image['id'])
+                if hard_delete:
+                    os.remove(f'{self.buffer_dir}%s.png' % _image['id'])
                 _zeros_class.remove(_image)
         return _zeros_class
 
@@ -81,14 +82,14 @@ class ImageProcessor:
             _img_filtered = (best_image * _img_mask) + _img_arr
             plt.imsave(f'{self.buffer_dir}%s.png' % _image['id'], _img_filtered, cmap='gray')
 
-    def zero_counting_filter(self):
+    def zero_counting_filter(self, hard_delete=False):
         """
         @brief Processes all the images in the image_lists attribute.
         """
         after_delete = []
         for _image_list in self.image_lists:
             _zeros_class = self.calculate_zeros(_image_list)
-            _zeros_discad = self.discard_images(_zeros_class)
+            _zeros_discad = self.discard_images(_zeros_class, hard_delete=hard_delete)
             _best_class = ImageProcessor.select_best_images(_zeros_discad)
             _best_image = self.calculate_best_image(_best_class)
             self.replace_and_save(_best_class, _best_image)
