@@ -11,7 +11,31 @@ Bem-vindo ao repositório de estudo de correlação do projeto PRECORSIA. Neste 
 1. Clone este repositório para a sua máquina local.
 2. Abra o Jupyter Notebook.
 3. Escolha o notebook relevante para a análise que deseja realizar.
-4. Siga as instruções no notebook para executar a análise de correlação.
+4. Faça uma cópia deste notebook para o seu ambiente de desenvolvimento.
+5. Certifique-se de que você tem todas as dependências necessárias instaladas. Você pode fazê-lo executando o seguinte comando em seu ambiente:
+        `pip install numpy matplotlib seaborn earthengine-api geemap Pillow --upgrade`
+6. Execute cada célula do notebook sequencialmente para realizar a análise. Certifique-se de ler e entender cada passo, e ajuste o código, conforme necessário, para atender aos seus requisitos específicos.
+7. Se você desejar contribuir com melhorias ou adicionar novas análises, siga as diretrizes no README do sub-módulo para contribuições.  
+Você pode criar um novo notebook ou fazer modificações neste, se necessário.
+
+## 🗺️ Autorização para utilizar os serviços Google Earth Engine
+
+Sempre que inicializar a aplicação, será solicitado acesso ao serviço GEE através da sua conta google pessoal.  
+Para prover acesso e utilizar a API, relize a autorização executando o código abaixo:
+```python
+import ee
+ee.Authenticate()
+ee.Initialize()
+```
+Você será direcionado(a) à uma página WEB, onde será requisitado permissões de acesso.  
+
+> Granting permission. This creates a web application definition controlled by your project provided above. After you click Generate Token, Google will ask for your permission to grant the application access to your data. See details in the step-by-step guide.
+
+> Expiry period. The granted permissions will expire in a week, after which you'll need to call ee.Authenticate() again.
+
+> Revoking permissions. You can view all applications connected to your account, and revoke permissions if needed, on https://myaccount.google.com/permissions. Search for "Earth Engine Notebook Client" to find the application defined by this page.
+
+> Technical details. The web application is defined by a development-mode "OAuth2 Client" on your specified project, which you can manage on the Google Cloud Console.
 
 ## 🌟 Contribuições
 
