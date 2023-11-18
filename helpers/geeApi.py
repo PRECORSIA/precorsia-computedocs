@@ -140,7 +140,6 @@ class PrecorsiaGee:
         @param round_factor An integer representing the factor by which to round the 'time_start' values.
         @return Returns a list of tuples. Each tuple contains two lists of image IDs from list_one and list_two that fall within the same time interval.
         """
-
         _one_rounded = [_img['time_start'] // 10**round_factor * 10**round_factor for _img in list_one]
         _two_rounded = [_img['time_start'] // 10**round_factor * 10**round_factor for _img in list_two]
 
