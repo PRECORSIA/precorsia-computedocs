@@ -3,8 +3,6 @@ from PIL import Image
 import seaborn as sns
 import numpy as np
 
-
-
 class ImageCorrelator:
 
     def __init__(self, corr_list, buffer_dir='./buffer/'):
