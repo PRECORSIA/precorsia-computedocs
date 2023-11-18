@@ -51,6 +51,10 @@ Gostaríamos de incentivar a contribuição para este módulo de estudo de corre
 ## 🚀 Tecnologias Utilizadas
 
 - [Jupyter Notebook](https://jupyter.org) - A aplicação web para criação e compartilhamento de documentos computacionais.
+- [Google Earth Engine](https://earthengine.google.com) - A plataforma de processamento de imagens geoespaciais do Google.
+- [Matplotlib](https://matplotlib.org) - Biblioteca Python para visualização e análise de dados.
+- [Seaborn](https://seaborn.pydata.org) - Biblioteca Python para visualização de dados baseada no Matplotlib.
+- [Pillow](https://python-pillow.org) - Biblioteca Python para manipulação de imagens.
 
 ## 👥 Equipe
 
