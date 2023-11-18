@@ -50,7 +50,7 @@ class ImageCorrelator:
         y = [i[1] for i in corr_avr]
         z = [x[i] / y[i] for i in range(len(x))]
 
-        plt.figure(figsize=(20, 10))
+        plt.figure(figsize=(15, 8))
         sns.set_style("whitegrid")
 
         plt.scatter(x, y, c=z, cmap='viridis')
