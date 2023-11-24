@@ -149,7 +149,7 @@ class PrecorsiaGee:
 
             elapsed_time = time.time() - start_time
             estimated_time = elapsed_time / (i+1) * (gds_list_len - i - 1)
-            print(f"\r{gds_object.dataset} Progress: {(i+1)/gds_list_len*100:.2f}% | Estimated time: {estimated_time:.2f}s", end="")
+            print(f"\r{gds_object.dataset} Progress: {(i+1)/gds_list_len*100:.2f}% | Estimated time: {estimated_time:.2f}s", end=" "*10)
         print("\n")
 
     @staticmethod
