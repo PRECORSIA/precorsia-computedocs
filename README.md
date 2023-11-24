@@ -4,7 +4,7 @@ Bem-vindo ao repositório de estudo de correlação do projeto PRECORSIA. Neste 
 
 ## 📚 Notebooks Disponíveis
 
-1. [Análise de correlação entre Temperatura e Cobertura Vegetal](https://github.com/PRECORSIA/precorsia-computedocs/blob/main/temperature-vegetation.ipynb)
+1. [À adicionar](link)
 
 ## 💡 Como Utilizar
 
