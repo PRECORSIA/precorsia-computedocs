@@ -50,7 +50,7 @@ class ImageCorrelator:
         y = [i[1] for i in corr_avr]
         z = [x[i] / y[i] for i in range(len(x))]
 
-        plt.figure(figsize=(15, 8))
+        plt.figure(figsize=(10, 5))
         sns.set_style("whitegrid")
         plt.rc('font', weight='bold')
 
