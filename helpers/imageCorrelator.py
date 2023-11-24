@@ -40,7 +40,7 @@ class ImageCorrelator:
         return corr_avr
 
     @staticmethod
-    def plot(corr_avr, title = {}):
+    def plot(corr_avr, title={}):
         """
         @brief Plots the correlation of average pixel values for pairs of images with a color gradient based on the ratio of x to y values.
         @param corr_avr A list of tuples. Each tuple contains the average pixel values for a pair of images.
@@ -52,6 +52,7 @@ class ImageCorrelator:
 
         plt.figure(figsize=(15, 8))
         sns.set_style("whitegrid")
+        plt.rc('font', weight='bold')
 
         plt.scatter(x, y, c=z, cmap='viridis')
         plt.colorbar(label=f'ratio between %s and %s' % (title['xlabel'], title['ylabel']))
