@@ -1,5 +1,8 @@
+import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
+import time
+import os
 import io
 import ee
 
@@ -36,6 +39,18 @@ class PrecorsiaGee:
         """
         ee.Authenticate()
         ee.Initialize()
+
+    @staticmethod
+    def date_daily(start, interval):
+        """
+        @brief Creates a tuple of ee.Date objects for a daily interval.
+        @param start A string representing the start date in the format 'YYYY-MM-DD'.
+        @param interval An integer representing the number of days to include in the interval.
+        @return Returns a tuple of ee.Date objects representing the start and end dates of the interval.
+        """
+        START = ee.Date(start )
+        END = START.advance(interval, 'day')
+        return START, END
 
     def list(self, geolocation, dateset):
         """
@@ -112,6 +127,30 @@ class PrecorsiaGee:
         _image_array = np.array(_image_p_l)
 
         return _image_array
+    
+    @staticmethod
+    def download_images(gds_list, gds_object, band_name, geolocation, image_scale):
+        """
+        @brief Downloads a list of images from the Google Earth Engine servers.
+        @param gds_list A list of dictionaries representing images. Each dictionary should have an 'id' key.
+        @param gds_object An instance of the PrecorsiaGee class.
+        @param band_name A string representing the band to include in the image.
+        @param geolocation A tuple containing the longitude and latitude of the location.
+        @param image_scale The scale in meters of the side of the square in meters.
+        """
+        gds_list_len = len(gds_list)
+        start_time = time.time()
+
+        for i, id in enumerate(gds_list):
+            filename = f'./buffer/{id["id"]}.png'
+            if not os.path.exists(filename):
+                gds_image = gds_object.image(id['id'], [band_name], geolocation, image_scale)
+                plt.imsave(filename, gds_image, cmap='gray')
+
+            elapsed_time = time.time() - start_time
+            estimated_time = elapsed_time / (i+1) * (gds_list_len - i - 1)
+            print(f"\r{gds_object.dataset} Progress: {(i+1)/gds_list_len*100:.2f}% | Estimated time: {estimated_time:.2f}s", end="")
+        print("\n")
 
     @staticmethod
     def correlate_dates(list_one, list_two, round_factor):
