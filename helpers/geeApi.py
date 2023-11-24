@@ -61,20 +61,21 @@ class PrecorsiaGee:
 
         return _image_list
 
-    def request(self, image, bands, geolocation):
+    def request(self, image, bands, geolocation, scale=5120):
         """
         @brief Generates a request for a specific image from the dataset.
         @param image The ID of the image to request.
         @param bands A list of band IDs to include in the request.
         @param geolocation A tuple containing the longitude and latitude of the location.
+        @param scale (Optional) The scale in meters of the side of the square in meters.
         @return Returns a dictionary containing the request parameters.
         """
-        _proj = ee.Projection('EPSG:4326').atScale(10).getInfo()
+        _proj = ee.Projection('EPSG:4326').atScale(scale/512).getInfo()
         _scale_x = _proj['transform'][0]
         _scale_y = _proj['transform'][4]
 
         return {
-            'assetId': self.dataset + '/' + image,
+            'expression': ee.Image(self.dataset + '/' + image),
             'fileFormat': 'PNG',
             'bandIds': bands,
             'grid': {
@@ -92,10 +93,10 @@ class PrecorsiaGee:
                 },
                 'crsCode': _proj['crs']
             },
-            'visualizationOptions':  {'ranges': [{'min': self.band_range[0], 'max': self.band_range[1]}]},
+            'visualizationOptions':  {'ranges': [{'min': self.band_range[0], 'max': self.band_range[1]}], 'paletteColors': ['010101', 'ffffff']},
         }
 
-    def image(self, image, bands, geolocation):
+    def image(self, image, bands, geolocation, scale):
         """
         @brief Fetches a specific image from the dataset and converts it to a grayscale numpy array.
         @param image The ID of the image to fetch.
@@ -103,8 +104,8 @@ class PrecorsiaGee:
         @param geolocation A tuple containing the longitude and latitude of the location.
         @return Returns a numpy array representing the grayscale image.
         """
-        _image_request = self.request(image, bands, geolocation)
-        _image_data = ee.data.getPixels(_image_request)
+        _image_request = self.request(image, bands, geolocation, scale)
+        _image_data = ee.data.computePixels(_image_request)
 
         _image_pixels = Image.open(io.BytesIO(_image_data))
         _image_p_l = _image_pixels.convert('L')
