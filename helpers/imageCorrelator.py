@@ -50,12 +50,12 @@ class ImageCorrelator:
         y = [i[1] for i in corr_avr]
         z = [x[i] / y[i] for i in range(len(x))]
 
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(16, 8))
         sns.set_style("whitegrid")
         plt.rc('font', weight='bold')
 
         plt.scatter(x, y, c=z, cmap='viridis')
-        plt.colorbar(label=f'ratio between %s and %s' % (title['xlabel'], title['ylabel']))
+        plt.colorbar(label=f'ratio between %s \nand %s' % (title['xlabel'], title['ylabel']))
         plt.title(title['title'])
         plt.xlabel(title['xlabel'])
         plt.ylabel(title['ylabel'])
