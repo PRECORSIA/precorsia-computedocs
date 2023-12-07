@@ -10,8 +10,9 @@ class PrecorsiaFilter:
         expected_keys = [
             "startDate", "days", "geolocation", "image_scale", "round_factor",
             "reference_dataset", "comparable_dataset", "reference_band_name",
-            "reference_band_range", "comparable_band_name", "comparable_band_range",
-            "gee", "imageCorrelator", "imageProcessor"
+            "reference_band_range", "reference_band_unit", "comparable_band_name", 
+            "comparable_band_range", "comparable_band_unit", "gee", 
+            "imageCorrelator", "imageProcessor"
         ]
 
         if not isinstance(configuration, dict):
@@ -35,8 +36,10 @@ class PrecorsiaFilter:
 
         self.reference_band_name = configuration["reference_band_name"]
         self.reference_band_range = configuration["reference_band_range"]
+        self.reference_band_unit = configuration["reference_band_unit"]
         self.comparable_band_name = configuration["comparable_band_name"]
         self.comparable_band_range = configuration["comparable_band_range"]
+        self.comparable_band_unit = configuration["comparable_band_unit"]
 
     @staticmethod
     def initialize(PrecorsiaGee):
@@ -61,14 +64,16 @@ class PrecorsiaFilter:
 
         self.corr_list = self.gee.connected_correlation(self.gds_one_lz, self.gds_two_lz, self.round_factor)
 
-        title = {'title': f'Correlation between {self.gds_one.dataset} ({self.reference_band_name}) \
-        and \n{self.gds_two.dataset} ({self.comparable_band_name}) at {self.geolocation}',
-        'xlabel': self.gds_one.dataset, 'ylabel': self.gds_two.dataset}
+        title = {'title': f'Correlation between {self.gds_one.dataset} and \n{self.gds_two.dataset} at {self.geolocation}',
+        'xlabel': f"average {self.reference_band_unit} of {self.reference_band_name} per pixel [{self.gds_one.dataset}]",
+        'ylabel': f"average {self.comparable_band_unit} of {self.comparable_band_name} per pixel [{self.gds_two.dataset}]"}
 
         self.gds_two_dataset_name = self.gds_two.dataset.replace('/', '_')
 
         self.corr_study = self.imageCorrelator(self.corr_list)
         self.corr_avr = self.corr_study.calculate_correlation()
+        self.corr_avr = [(x * (self.reference_band_range[1] / 255), y * (self.comparable_band_range[1] / 255)) for x, y in self.corr_avr]
+
         self.imageCorrelator.plot(self.corr_avr, title)
         plt.savefig(f'plots/{self.gds_two_dataset_name}_normal.jpg', dpi=150)
         plt.close()
