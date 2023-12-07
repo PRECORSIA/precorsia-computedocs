@@ -75,7 +75,7 @@ class PrecorsiaFilter:
         self.corr_avr = [(x * (self.reference_band_range[1] / 255), y * (self.comparable_band_range[1] / 255)) for x, y in self.corr_avr]
 
         self.imageCorrelator.plot(self.corr_avr, title)
-        plt.savefig(f'plots/{self.gds_two_dataset_name}_normal.jpg', dpi=150)
+        plt.savefig(f'plots/{self.gds_two_dataset_name}_{self.geolocation[0]}_{self.geolocation[1]}_normal.jpg', dpi=150)
         plt.close()
 
         self.x_values, self.y_values = zip(*self.corr_avr)
@@ -95,7 +95,7 @@ class PrecorsiaFilter:
                 self.best_shifted_corr_avr = shifted_corr_avr
 
         self.imageCorrelator.plot(self.best_shifted_corr_avr, title)
-        plt.savefig(f'plots/{self.gds_two_dataset_name}_shifted.jpg', dpi=150)
+        plt.savefig(f'plots/{self.gds_two_dataset_name}_{self.geolocation[0]}_{self.geolocation[1]}_shifted.jpg', dpi=150)
         plt.close()
         print(f"Best shift: {self.best_shift}, Best correlation: {self.best_corr}")
 
