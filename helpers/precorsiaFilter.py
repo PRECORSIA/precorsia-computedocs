@@ -8,7 +8,7 @@ class PrecorsiaFilter:
     def __init__(self, configuration):
 
         expected_keys = [
-            "startDate", "days", "geolocation", "image_scale", "round_factor",
+            "climate", "start_date", "days", "geolocation", "image_scale", "round_factor",
             "reference_dataset", "comparable_dataset", "reference_band_name",
             "reference_band_range", "reference_band_unit", "comparable_band_name", 
             "comparable_band_range", "comparable_band_unit", "gee", 
@@ -26,7 +26,7 @@ class PrecorsiaFilter:
         self.imageCorrelator = configuration["imageCorrelator"]
         self.imageProcessor = configuration["imageProcessor"]
        
-        self.START, self.END = self.gee.date_daily(configuration["startDate"], configuration["days"])
+        self.START, self.END = self.gee.date_daily(configuration["start_date"], configuration["days"])
         self.geolocation = configuration["geolocation"]
         self.image_scale = configuration["image_scale"]
         self.round_factor = configuration["round_factor"]
@@ -40,6 +40,8 @@ class PrecorsiaFilter:
         self.comparable_band_name = configuration["comparable_band_name"]
         self.comparable_band_range = configuration["comparable_band_range"]
         self.comparable_band_unit = configuration["comparable_band_unit"]
+
+        self.climate = configuration["climate"]
 
     @staticmethod
     def initialize(PrecorsiaGee):
@@ -75,7 +77,7 @@ class PrecorsiaFilter:
         self.corr_avr = [(x * (self.reference_band_range[1] / 255), y * (self.comparable_band_range[1] / 255)) for x, y in self.corr_avr]
 
         self.imageCorrelator.plot(self.corr_avr, title)
-        plt.savefig(f'plots/{self.gds_two_dataset_name}_{self.geolocation[0]}_{self.geolocation[1]}_{self.START.args.get("value")}_{self.END.args.get("delta")._number}_normal.jpg', dpi=150)
+        plt.savefig(f'plots/{self.gds_two_dataset_name}_{self.climate}_{self.geolocation[0]}_{self.geolocation[1]}_{self.START.args.get("value")}_{self.END.args.get("delta")._number}_normal.jpg', dpi=150)
         plt.close()
 
         self.x_values, self.y_values = zip(*self.corr_avr)
@@ -83,11 +85,20 @@ class PrecorsiaFilter:
         self.best_corr = -np.inf
         self.best_shift = 0
 
-        for i in range(int(len(self.x_values)/2)):
-            shifted_y_values = self.y_values[:-i] if i != 0 else self.y_values
-            shifted_x_values = self.x_values[i:]
-            shifted_corr_avr = list(zip(shifted_x_values, shifted_y_values))
-            corr = np.corrcoef(shifted_x_values, shifted_y_values)[0, 1]
+        for i in range(-int(len(self.x_values)/4), int(len(self.x_values)/4), 1):
+
+            if (i == 0): continue
+            
+            if i > 0:
+                shifted_y_values = self.y_values[:-i]
+                shifted_x_values = self.x_values[i:]
+            else:
+                shifted_y_values = self.y_values[-i:]
+                shifted_x_values = self.x_values[:i]
+
+            if len(shifted_y_values) > 1 and len(shifted_x_values) > 1:
+                shifted_corr_avr = list(zip(shifted_x_values, shifted_y_values))
+                corr = np.corrcoef(shifted_x_values, shifted_y_values)[0, 1]
 
             if corr > self.best_corr:
                 self.best_corr = corr
@@ -95,14 +106,14 @@ class PrecorsiaFilter:
                 self.best_shifted_corr_avr = shifted_corr_avr
 
         self.imageCorrelator.plot(self.best_shifted_corr_avr, title)
-        plt.savefig(f'plots/{self.gds_two_dataset_name}_{self.geolocation[0]}_{self.geolocation[1]}_{self.START.args.get("value")}_{self.END.args.get("delta")._number}_shifted.jpg', dpi=150)
+        plt.savefig(f'plots/{self.gds_two_dataset_name}_{self.climate}_{self.geolocation[0]}_{self.geolocation[1]}_{self.START.args.get("value")}_{self.END.args.get("delta")._number}_shifted.jpg', dpi=150)
         plt.close()
         print(f"Best shift: {self.best_shift}, Best correlation: {self.best_corr}")
 
         data = {"best_correlation": self.best_corr}
         data["best_shift"] = self.best_shift
         data["correlation_list"] = self.corr_list
-        file_name = f'data/corr_list_{self.gds_two_dataset_name}_{self.geolocation[0]}_{self.geolocation[1]}_{self.START.args.get("value")}_{self.END.args.get("delta")._number}.json'
+        file_name = f'data/corr_list_{self.gds_two_dataset_name}_{self.climate}_{self.geolocation[0]}_{self.geolocation[1]}_{self.START.args.get("value")}_{self.END.args.get("delta")._number}.json'
         with open(file_name, 'w') as file:
             json.dump(data, file)
 
