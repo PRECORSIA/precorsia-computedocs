@@ -82,8 +82,11 @@ class PrecorsiaFilter:
 
         self.x_values, self.y_values = zip(*self.corr_avr)
         self.best_shifted_corr_avr = []
-        self.best_corr = -np.inf
         self.best_shift = 0
+        
+        self.best_corr = np.corrcoef(self.x_values, self.y_values)[0, 1]
+        if np.isnan(self.best_corr): self.best_corr = 0
+
 
         for i in range(-int(len(self.x_values)/4), int(len(self.x_values)/4), 1):
 
